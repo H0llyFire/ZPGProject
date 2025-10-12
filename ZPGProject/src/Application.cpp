@@ -3,11 +3,6 @@
 #include <chrono>
 #include <iostream>
 
-#include "gfx/DrawableObject.h"
-#include "gfx/Model.h"
-#include "gfx/Scene.h"
-#include "gfx/Shader.h"
-
 #include "gfx/models/bushes.h"
 #include "gfx/models/gift.h"
 #include "gfx/models/plain.h"
@@ -61,7 +56,11 @@ Application::Application(int width, int height)
 
 void Application::Init()
 {
+	glfwSetWindowUserPointer(_win, this);
 	glfwSetErrorCallback(error_callback);
+	glfwSetMouseButtonCallback(_win, MouseButtonCallback);
+	glfwSetCursorPosCallback(_win, CursorPosCallback);
+	glfwSetKeyCallback(_win, KeyPressCallback);
 	// get version info
 	
 	std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << '\n';
@@ -85,12 +84,14 @@ void Application::Run()
 		 .6f, -.3f, .0f,  0, 0, 1
 	};
 
+	Camera camera{static_cast<float>(_width), static_cast<float>(_height)};
+	_currentCamera = &camera;
 
-	Shader shaderTest1("Test1");
-	Shader shaderTest2("Test2");
-	Shader shaderTest3("Test3");
-	Shader shaderTest4("Test4", "Test3");
-	Shader shaderTest5("Test4");
+	Shader shaderTest1(&camera, "Test1");
+	Shader shaderTest2(&camera,"Test2");
+	Shader shaderTest3(&camera,"Test3");
+	Shader shaderTest4(&camera,"Test4", "Test3");
+	Shader shaderTest5(&camera,"Test4");
 
 
 	Model modelBushes(bushes, sizeof(bushes) / sizeof(float));
@@ -199,6 +200,22 @@ void Application::Run()
 		test3.AddObject(DrawableObject(&modelSphere, &shaderTest4, transforms[18 + i].get()));
 	}
 
+	Scene test4{};
+
+	for(int x = 0; x < 25; x++)
+	{
+		for(int z = 0; z < 25; z++)
+		{
+			transforms.push_back(std::make_shared<Transforms>());
+			translates.push_back(std::make_shared<Translate>(glm::vec3(1*x, -0.5f, 1*z)));
+			transforms.back()->AddTransform(translates.back());
+			test4.AddObject(DrawableObject(&modelTree, &shaderTest5, transforms.back().get()));
+		}
+	}
+
+
+
+
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -207,14 +224,26 @@ void Application::Run()
 	{
 	    timeframe currentFrame = std::chrono::high_resolution_clock::now();
 	    std::chrono::duration<float> elapsed = currentFrame - lastFrame;
-	    float dTime = elapsed.count();
+		float dTime = elapsed.count();
 	    lastFrame = currentFrame;
-
-
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		test3.Draw(dTime);
+		if(_keyIsPressed[GLFW_KEY_W])
+			_currentCamera->MoveForward(dTime);
+		if(_keyIsPressed[GLFW_KEY_S])
+			_currentCamera->MoveBackward(dTime);
+		if(_keyIsPressed[GLFW_KEY_A])
+			_currentCamera->MoveLeft(dTime);
+		if(_keyIsPressed[GLFW_KEY_D])
+			_currentCamera->MoveRight(dTime);
+
+
+
+
+
+
+		test4.Draw(dTime);
 		
 		glfwPollEvents();
 		glfwSwapBuffers(_win);
@@ -227,4 +256,51 @@ void Application::Run()
 void Application::error_callback(int error, const char* description)
 {
 	fputs(description, stderr);
+}
+
+void Application::CursorPosCallback(GLFWwindow* window, double xpos, double ypos)
+{
+    Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
+	if (!app || !app->_rightMousePressed) 
+		return;
+	
+    float sensitivity = 0.01f;
+
+    float yaw = sensitivity * (xpos - app->_cursorX);
+    float pitch = sensitivity * (ypos - app->_cursorY);
+
+	app->_cursorX = xpos;
+	app->_cursorY = ypos;
+
+
+	app->_currentCamera->CalcTarget(yaw, pitch);
+}
+
+void Application::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+{
+    Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
+	if (!app) 
+		return;
+	
+    if (button == GLFW_MOUSE_BUTTON_RIGHT) {
+        if (action == GLFW_PRESS) {
+            app->_rightMousePressed = true;
+            glfwGetCursorPos(window, &app->_cursorX, &app->_cursorY);
+        } else if (action == GLFW_RELEASE) {
+            app->_rightMousePressed = false;
+        }
+    }
+}
+
+void Application::KeyPressCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	if(action != GLFW_PRESS && action != GLFW_REPEAT && action != GLFW_RELEASE)
+		return;
+	Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
+	if(action == GLFW_PRESS && key == GLFW_KEY_ESCAPE)
+		glfwSetWindowShouldClose(window, GL_TRUE);
+	else if(action == GLFW_PRESS)
+		app->_keyIsPressed[key] = true;
+	else if(action == GLFW_RELEASE)
+		app->_keyIsPressed[key] = false;
 }

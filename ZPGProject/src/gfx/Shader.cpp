@@ -1,4 +1,5 @@
 #include "Shader.h"
+#include "Camera.h"
 
 #include <fstream>
 #include <iostream>
@@ -60,14 +61,17 @@ void Shader::Create()
 	}
 }
 
-Shader::Shader(const std::string& vShaderName, const std::string& fShaderName)
+Shader::Shader(Camera* camera, const std::string& vShaderName, const std::string& fShaderName)
+	: _camera(camera)
 {
 	Compile(vShaderName, fShaderName);
 	Create();
+	_camera->AddShader(this);
 }
 
 Shader::~Shader()
 {
+	_camera->RemoveShader(this);
 	glDeleteProgram(_program);
 	glDeleteShader(_fShader);
 	glDeleteShader(_vShader);
@@ -87,5 +91,14 @@ void Shader::Bind(glm::mat4 iMat)
 void Shader::Unbind()
 {
 	glUseProgram(0);
+}
+
+void Shader::UpdateCameraMatrices()
+{
+	Bind();
+	const GLint idViewMatrix = glGetUniformLocation(_program, "viewMatrix");
+	glUniformMatrix4fv(idViewMatrix, 1, GL_FALSE, &_camera->GetCamera()[0][0]);
+	const GLint idProjectionMatrix = glGetUniformLocation(_program, "projectionMatrix");
+	glUniformMatrix4fv(idProjectionMatrix, 1, GL_FALSE, &_camera->GetProjection()[0][0]);
 }
 

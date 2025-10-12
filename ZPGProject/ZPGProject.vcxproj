@@ -30,6 +30,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\gfx\Camera.cpp" />
     <ClCompile Include="src\gfx\DrawableObject.cpp" />
     <ClCompile Include="src\gfx\Model.cpp" />
     <ClCompile Include="src\gfx\Scene.cpp" />
@@ -41,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Application.h" />
+    <ClInclude Include="src\gfx\Camera.h" />
     <ClInclude Include="src\gfx\DrawableObject.h" />
     <ClInclude Include="src\gfx\Model.h" />
     <ClInclude Include="src\gfx\models\bushes.h" />
@@ -60,6 +62,7 @@
     <ClInclude Include="src\gfx\trans\Translate.h" />
     <ClInclude Include="src\gfx\VertexArray.h" />
     <ClInclude Include="src\gfx\VertexBuffer.h" />
+    <ClInclude Include="src\ResourceManager.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
