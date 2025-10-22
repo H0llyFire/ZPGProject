@@ -3,7 +3,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "gfx/trans/Transform.h"
+#include "gfx/trans/TransformComponent.h"
 
 
 template<typename T>
@@ -34,12 +34,12 @@ public:
 	}
 
 	template<typename Subclass, typename... Args>
-	std::shared_ptr<Transform> Add(const std::string& name, Args&&... args)
+	std::shared_ptr<T> Add(const std::string& name, Args&&... args)
 	{
-	    return Add(name, std::make_shared<Subclass>(std::forward<Args>(args)...));
+	    return Copy(name, std::make_shared<Subclass>(std::forward<Args>(args)...));
 	}
 
-	std::shared_ptr<T> Add(const std::string& name, std::shared_ptr<T> resource)
+	std::shared_ptr<T> Copy(const std::string& name, std::shared_ptr<T> resource)
     {
         if (std::shared_ptr<T> existing = Get(name))
             return existing;

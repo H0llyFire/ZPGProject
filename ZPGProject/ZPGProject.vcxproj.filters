@@ -23,6 +23,14 @@
     <None Include="res\shaders\Test3.frag" />
     <None Include="res\shaders\Test3.vert" />
     <None Include="res\shaders\Test4.frag" />
+    <None Include="res\shaders\Lambert.frag" />
+    <None Include="res\shaders\Lambert.vert" />
+    <None Include="res\shaders\Constant.frag" />
+    <None Include="res\shaders\Constant.vert" />
+    <None Include="res\shaders\Phong.frag" />
+    <None Include="res\shaders\Phong.vert" />
+    <None Include="res\shaders\Blinn.frag" />
+    <None Include="res\shaders\Blinn.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp">
@@ -43,7 +51,7 @@
     <ClCompile Include="src\gfx\Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\gfx\Transforms.cpp">
+    <ClCompile Include="src\gfx\trans\TransformComposite.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\gfx\VertexArray.cpp">
@@ -53,6 +61,24 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\gfx\Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\Light.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\ShaderProgram.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\VertexShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\FragmentShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ObservableObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Resources.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -93,7 +119,7 @@
     <ClInclude Include="src\gfx\trans\Scale.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\trans\Transform.h">
+    <ClInclude Include="src\gfx\trans\TransformComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\trans\Translate.h">
@@ -111,7 +137,7 @@
     <ClInclude Include="src\gfx\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\Transforms.h">
+    <ClInclude Include="src\gfx\trans\TransformComposite.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\VertexArray.h">
@@ -121,6 +147,27 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ResourceManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Observer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\ShaderProgram.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\VertexShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\FragmentShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ObservableObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Resources.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

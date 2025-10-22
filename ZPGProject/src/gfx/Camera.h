@@ -2,12 +2,14 @@
 #include <list>
 #include <glm/ext/matrix_float4x4.hpp>
 
+#include "../ObservableObject.h"
+#include "../Observer.h"
+
 class Shader;
 
-class Camera
+class Camera : public ObservableObject
 {
 private:
-    std::list<Shader*> _shaders;
     glm::vec3 _eye, _target, _up;
 	glm::mat4 _viewMat, _projMat;
 	float _ratioWidth, _ratioHeight;
@@ -17,10 +19,11 @@ private:
 	void CalcProjMat();
 public:
 	Camera(float ratioWidth, float ratioHeight);
-	Camera(float ratioWidth, float ratioHeight, Shader* shader);
+	Camera(float ratioWidth, float ratioHeight, const std::shared_ptr<Observer>& shader);
 
-	glm::mat4 GetCamera();
-	glm::mat4 GetProjection();
+	glm::mat4 GetCamera() const;
+	glm::vec3 GetPosition() const;
+	glm::mat4 GetProjection() const;
 
 
 	void CalcTarget(float yaw, float pitch);
@@ -29,8 +32,5 @@ public:
 	void MoveRight(float dTime);
 	void MoveForward(float dTime);
 	void MoveBackward(float dTime);
-
-	void AddShader(Shader* shader);
-	void RemoveShader(Shader* shader);
-	void NotifyShaders();
+	void MoveTo(float x, float y, float z);
 };

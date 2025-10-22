@@ -1,6 +1,6 @@
 ﻿#include "DrawableObject.h"
 
-DrawableObject::DrawableObject(Model* _model, Shader* shader, Transforms* transforms)
+DrawableObject::DrawableObject(const std::shared_ptr<Model>& _model, const std::shared_ptr<ShaderProgram>& shader, const std::shared_ptr<TransformComposite>& transforms)
 	: _shader(shader), _model(_model), _trans(transforms)
 {
 
@@ -8,6 +8,9 @@ DrawableObject::DrawableObject(Model* _model, Shader* shader, Transforms* transf
 
 void DrawableObject::Draw(float dTime) const
 {
-	_shader->Bind(_trans->GetModelMatrix(dTime));
+	glm::mat4 identity(1.0f);
+	if (_trans != nullptr)
+		_trans->Apply(identity, dTime);
+	_shader->Bind(identity);
 	_model->Draw();
 }

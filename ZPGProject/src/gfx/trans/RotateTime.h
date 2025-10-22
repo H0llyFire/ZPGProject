@@ -1,9 +1,9 @@
 #pragma once
 #include <glm/ext/matrix_transform.hpp>
 
-#include "Transform.h"
+#include "TransformComponent.h"
 class RotateTime :
-    public Transform
+    public TransformComponent
 {
 private:
 	float _currentAngle = 0.0f;

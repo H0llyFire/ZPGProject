@@ -1,14 +1,14 @@
 ﻿#pragma once
 #include "Model.h"
-#include "Shader.h"
-#include "Transforms.h"
+#include "ShaderProgram.h"
+#include "trans/TransformComposite.h"
 
 class DrawableObject
 {
-	Shader* _shader;
-	Model* _model;
-	Transforms* _trans;
+	std::shared_ptr<ShaderProgram> _shader;
+	std::shared_ptr<Model> _model;
+	std::shared_ptr<TransformComposite> _trans; //Maybe change to Unique ptr later
 public:
-	DrawableObject(Model* _model, Shader* shader, Transforms* transforms);
+	DrawableObject(const std::shared_ptr<Model>& _model, const std::shared_ptr<ShaderProgram>& shader, const std::shared_ptr<TransformComposite>& transforms);
 	void Draw(float dTime) const;
 };

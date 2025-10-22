@@ -3,6 +3,8 @@
 #include <chrono>
 #include <iostream>
 
+#include "Resources.h"
+#include "gfx/ShaderProgram.h"
 #include "gfx/models/bushes.h"
 #include "gfx/models/gift.h"
 #include "gfx/models/plain.h"
@@ -14,6 +16,7 @@
 #include "gfx/trans/Rotate.h"
 #include "gfx/trans/RotateTime.h"
 #include "gfx/trans/Scale.h"
+#include "gfx/trans/TransformComposite.h"
 #include "gfx/trans/Translate.h"
 
 using timeframe = std::chrono::time_point<std::chrono::steady_clock>;
@@ -76,7 +79,15 @@ void Application::Init()
 
 void Application::Run()
 {
-	
+	Resources resourceManager;
+	_currentCamera = resourceManager.InitCamera(static_cast<float>(_width), static_cast<float>(_height));
+	resourceManager.InitModels();
+	resourceManager.InitShaders("Main");
+	resourceManager.InitScenes();
+
+
+	/*
+
 	float triangleWithNormal[18] =
 	{
 		 .0f,  .6f, .0f,  0, 0, 1,
@@ -86,12 +97,31 @@ void Application::Run()
 
 	Camera camera{static_cast<float>(_width), static_cast<float>(_height)};
 	_currentCamera = &camera;
+	_currentCamera->MoveTo(0.f, 0.f, 0.f);
 
-	Shader shaderTest1(&camera, "Test1");
-	Shader shaderTest2(&camera,"Test2");
-	Shader shaderTest3(&camera,"Test3");
-	Shader shaderTest4(&camera,"Test4", "Test3");
-	Shader shaderTest5(&camera,"Test4");
+
+	VertexShader vShaderTest("Test4");
+	VertexShader vShaderConstant("Constant");
+	VertexShader vShaderLambert("Lambert");
+	VertexShader vShaderPhong("Phong");
+	VertexShader vShaderBlinn("Blinn");
+	
+	FragmentShader fShaderTest("Test4");
+	FragmentShader fShaderConstant("Constant");
+	FragmentShader fShaderLambert("Lambert");
+	FragmentShader fShaderPhong("Phong");
+	FragmentShader fShaderBlinn("Blinn");
+
+
+	ShaderProgram shaderTest(&camera, &vShaderTest, &fShaderTest);
+	ShaderProgram shaderConstant(&camera, &vShaderConstant, &fShaderConstant);
+	ShaderProgram shaderLambert(&camera, &vShaderLambert, &fShaderLambert);
+	ShaderProgram shaderPhong(&camera, &vShaderPhong, &fShaderPhong);
+	ShaderProgram shaderBlinn(&camera, &vShaderBlinn, &fShaderBlinn);
+
+
+	Light lightAtOrigin(glm::vec3(0.f, 0.f, 0.f), glm::vec4(1.f, 1.f, 1.f, 1.f));
+
 
 
 	Model modelBushes(bushes, sizeof(bushes) / sizeof(float));
@@ -120,41 +150,41 @@ void Application::Run()
 	std::shared_ptr<Scale> scale25 = std::make_shared<Scale>(glm::vec3(0.25f, 0.25f, 0.25f));
 	std::shared_ptr<Scale> scale50 = std::make_shared<Scale>(glm::vec3(0.5f, 0.5f, 0.5f));
 
-	Transforms None{};
+	TransformComposite None{};
 
-	Transforms RotatingTransf(timedRotationZ);
+	TransformComposite RotatingTransf(timedRotationZ);
 
-	Transforms TransfUpLeft(translUpLeft);
+	TransformComposite TransfUpLeft(translUpLeft);
 	TransfUpLeft.AddTransform(scale25);
-	Transforms TransfUpRight(translUpRight);
+	TransformComposite TransfUpRight(translUpRight);
 	TransfUpRight.AddTransform(scale25);
-	Transforms TransfDownLeft(translDownLeft);
+	TransformComposite TransfDownLeft(translDownLeft);
 	TransfDownLeft.AddTransform(scale25);
-	Transforms TransfDownRight(translDownRight);
+	TransformComposite TransfDownRight(translDownRight);
 	TransfDownRight.AddTransform(scale25);
 	
-	Transforms size5(scale5);
-	Transforms size10(scale10);
-	Transforms size25(scale25);
-	Transforms size50(scale50);
+	TransformComposite size5(scale5);
+	TransformComposite size10(scale10);
+	TransformComposite size25(scale25);
+	TransformComposite size50(scale50);
 
 
 
 
 
-	DrawableObject objTriangle(&modelTriangle, &shaderTest4, &RotatingTransf);
+	DrawableObject objTriangle(&modelTriangle, &shaderTest, &RotatingTransf);
 
-	DrawableObject objSphere1(&modelSphere, &shaderTest4, &TransfUpLeft);
-	DrawableObject objSphere2(&modelSphere, &shaderTest5, &TransfUpRight);
-	DrawableObject objSphere3(&modelSphere, &shaderTest5, &TransfDownLeft);
-	DrawableObject objSphere4(&modelSphere, &shaderTest4, &TransfDownRight);
+	DrawableObject objSphere1(&modelSphere, &shaderBlinn, &TransfUpLeft);
+	DrawableObject objSphere2(&modelSphere, &shaderBlinn, &TransfUpRight);
+	DrawableObject objSphere3(&modelSphere, &shaderBlinn, &TransfDownLeft);
+	DrawableObject objSphere4(&modelSphere, &shaderBlinn, &TransfDownRight);
 
-	DrawableObject objSuziFlat(&modelSuziFlat, &shaderTest4, &size50);
-	DrawableObject objSuziSmooth(&modelSuziSmooth, &shaderTest4, &size50);
-	DrawableObject objTree(&modelTree, &shaderTest4, &size25);
-	DrawableObject objBushes(&modelBushes, &shaderTest4, &size50);
-	DrawableObject objGift(&modelGift, &shaderTest4, &RotatingTransf);
-	DrawableObject objPlain(&modelPlain, &shaderTest4, &size50);
+	DrawableObject objSuziFlat(&modelSuziFlat, &shaderTest, &size50);
+	DrawableObject objSuziSmooth(&modelSuziSmooth, &shaderTest, &size50);
+	DrawableObject objTree(&modelTree, &shaderTest, &size25);
+	DrawableObject objBushes(&modelBushes, &shaderTest, &size50);
+	DrawableObject objGift(&modelGift, &shaderTest, &RotatingTransf);
+	DrawableObject objPlain(&modelPlain, &shaderTest, &size50);
 
 	Scene test1{};
 	test1.AddObject(objTriangle);
@@ -168,36 +198,36 @@ void Application::Run()
 	Scene test3{};
 
 	std::vector<std::shared_ptr<Translate>> translates;
-	std::vector<std::shared_ptr<Transforms>> transforms;
+	std::vector<std::shared_ptr<TransformComposite>> transforms;
 	for(int i = 0; i < 8; i++)
 	{
-		transforms.push_back(std::make_shared<Transforms>());
+		transforms.push_back(std::make_shared<TransformComposite>());
 		translates.push_back(std::make_shared<Translate>(glm::vec3(-0.9f + i * 0.25f, -0.6f, 0.0f)));
 
 		transforms[i]->AddTransform(translates[i]);
 		transforms[i]->AddTransform(scale10);
-		test3.AddObject(DrawableObject(&modelTree, &shaderTest5, transforms[i].get()));
+		test3.AddObject(DrawableObject(&modelTree, &shaderTest, transforms[i].get()));
 	}
 
 	for(int i = 0; i < 10; i++)
 	{
-		transforms.push_back(std::make_shared<Transforms>());
+		transforms.push_back(std::make_shared<TransformComposite>());
 		translates.push_back(std::make_shared<Translate>(glm::vec3(-0.9f + (i % 10) * 0.2f,  0.2f, 0.0f)));
 		transforms[8 + i]->AddTransform(translates[8 + i]);
 		transforms[8 + i]->AddTransform(scale10);
 		transforms[8 + i]->AddTransform(timedRotationY);
-		test3.AddObject(DrawableObject(&modelSuziFlat, &shaderTest5, transforms[8 + i].get()));
+		test3.AddObject(DrawableObject(&modelSuziFlat, &shaderTest, transforms[8 + i].get()));
 	}
 	srand(static_cast<unsigned>(time(0)));
 	for(int i = 0; i < 10; i++)
 	{
 		float x = -1.f + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX/(2.f)));
 		float y = -1.f + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX/(2.f)));
-		transforms.push_back(std::make_shared<Transforms>());
+		transforms.push_back(std::make_shared<TransformComposite>());
 		translates.push_back(std::make_shared<Translate>(glm::vec3(x, y, -1.0f)));
 		transforms[18 + i]->AddTransform(translates[18 + i]);
 		transforms[18 + i]->AddTransform(scale15);
-		test3.AddObject(DrawableObject(&modelSphere, &shaderTest4, transforms[18 + i].get()));
+		test3.AddObject(DrawableObject(&modelSphere, &shaderTest, transforms[18 + i].get()));
 	}
 
 	Scene test4{};
@@ -206,16 +236,17 @@ void Application::Run()
 	{
 		for(int z = 0; z < 25; z++)
 		{
-			transforms.push_back(std::make_shared<Transforms>());
+			transforms.push_back(std::make_shared<TransformComposite>());
 			translates.push_back(std::make_shared<Translate>(glm::vec3(1*x, -0.5f, 1*z)));
 			transforms.back()->AddTransform(translates.back());
-			test4.AddObject(DrawableObject(&modelTree, &shaderTest5, transforms.back().get()));
+			test4.AddObject(DrawableObject(&modelTree, &shaderLambert, transforms.back().get()));
 		}
 	}
+	*/
 
 
 
-
+	auto scene = resourceManager.EnableScene("SolarSystem");
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -230,20 +261,19 @@ void Application::Run()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		if(_keyIsPressed[GLFW_KEY_W])
-			_currentCamera->MoveForward(dTime);
+			_currentCamera->MoveForward(dTime * (_keyIsPressed[GLFW_KEY_LEFT_SHIFT] ? 4.f : 1.f));
 		if(_keyIsPressed[GLFW_KEY_S])
-			_currentCamera->MoveBackward(dTime);
+			_currentCamera->MoveBackward(dTime * (_keyIsPressed[GLFW_KEY_LEFT_SHIFT] ? 4.f : 1.f));
 		if(_keyIsPressed[GLFW_KEY_A])
-			_currentCamera->MoveLeft(dTime);
+			_currentCamera->MoveLeft(dTime * (_keyIsPressed[GLFW_KEY_LEFT_SHIFT] ? 4.f : 1.f));
 		if(_keyIsPressed[GLFW_KEY_D])
-			_currentCamera->MoveRight(dTime);
+			_currentCamera->MoveRight(dTime * (_keyIsPressed[GLFW_KEY_LEFT_SHIFT] ? 4.f : 1.f));
 
 
 
+		scene->Draw(dTime);
 
-
-
-		test4.Draw(dTime);
+		//test2.Draw(dTime);
 		
 		glfwPollEvents();
 		glfwSwapBuffers(_win);

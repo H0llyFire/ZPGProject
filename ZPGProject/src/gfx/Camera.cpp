@@ -1,41 +1,45 @@
 ﻿#include "Camera.h"
 #include "glm/gtc/matrix_transform.hpp"
 
-#include "Shader.h"
 
 void Camera::CalcViewMat()
 {
 	_viewMat = glm::lookAt(_eye, _eye+_target, _up);
-	NotifyShaders();
+	NotifyAll();
 }
 
 void Camera::CalcProjMat()
 {
 	_projMat = glm::perspective(glm::radians(60.f), _ratioWidth / _ratioHeight, 0.1f, 100.0f);
-	NotifyShaders();
+	NotifyAll();
 }
 
 Camera::Camera(float ratioWidth, float ratioHeight)
 	: _eye(0.f, 0.f, 0.f), _target(0.f, 0.f, 0.f), _up(0.f, 1.f, 0.f), _ratioWidth(ratioWidth), _ratioHeight(ratioHeight)
 {
-	CalcViewMat();
 	CalcProjMat();
+	CalcViewMat();
 }
 
-Camera::Camera(float ratioWidth, float ratioHeight, Shader* shader)
+Camera::Camera(float ratioWidth, float ratioHeight, const std::shared_ptr<Observer>& shader)
 	: _eye(0.f, 0.f, 0.f), _target(0.f, 0.f, 0.f), _up(0.f, 1.f, 0.f), _ratioWidth(ratioWidth), _ratioHeight(ratioHeight)
 {
-	AddShader(shader);
-	CalcViewMat();
+	Attach(shader);
 	CalcProjMat();
+	CalcViewMat();
 }
 
-glm::mat4 Camera::GetCamera()
+glm::mat4 Camera::GetCamera() const
 {
 	return _viewMat;
 }
 
-glm::mat4 Camera::GetProjection()
+glm::vec3 Camera::GetPosition() const
+{
+	return _eye;
+}
+
+glm::mat4 Camera::GetProjection() const
 {
 	return _projMat;
 }
@@ -48,11 +52,6 @@ void Camera::CalcTarget(float yaw, float pitch)
 		_pitch = glm::radians(179.9f);
 	else if(_pitch < glm::radians(0.1f))
 		_pitch = glm::radians(0.1f);
-	/*
-	_target.x = cos(_pitch) * cos(_yaw);
-	_target.y = sin(_pitch);
-	_target.z = cos(_pitch) * sin(_yaw);
-	*/
 
 	_target.x=sin(_pitch)*cos(_yaw);
 	_target.z=sin(_pitch)*sin(_yaw);
@@ -63,43 +62,32 @@ void Camera::CalcTarget(float yaw, float pitch)
 
 void Camera::MoveLeft(float dTime)
 {
-	_eye -= dTime * glm::normalize(glm::cross(_target, _up));
+	_eye -= 2 * dTime * glm::normalize(glm::cross(_target, _up));
 	CalcViewMat();
 }
 
 void Camera::MoveRight(float dTime)
 {
-	_eye += dTime * glm::normalize(glm::cross(_target, _up));
+	_eye += 2 * dTime * glm::normalize(glm::cross(_target, _up));
 	CalcViewMat();
 }
 
 void Camera::MoveForward(float dTime)
 {
-	_eye += dTime * glm::normalize(_target);
+	_eye += 2 * dTime * glm::normalize(_target);
 	CalcViewMat();
 }
 
 void Camera::MoveBackward(float dTime)
 {
-	_eye -= dTime * glm::normalize(_target);
+	_eye -= 2 * dTime * glm::normalize(_target);
 	CalcViewMat();
 }
 
-void Camera::AddShader(Shader* shader)
+void Camera::MoveTo(float x, float y, float z)
 {
-	_shaders.push_back(shader);
-	shader->UpdateCameraMatrices();
-}
-
-void Camera::RemoveShader(Shader* shader)
-{
-	_shaders.remove(shader);
-}
-
-void Camera::NotifyShaders()
-{
-	for (Shader* shader : _shaders)
-	{
-		shader->UpdateCameraMatrices();
-	}
+	_eye.x = x;
+	_eye.y = y;
+	_eye.z = z;
+	CalcViewMat();
 }

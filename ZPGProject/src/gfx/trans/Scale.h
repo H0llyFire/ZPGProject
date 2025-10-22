@@ -1,9 +1,9 @@
 ﻿#pragma once
 #include <glm/ext/matrix_transform.hpp>
 
-#include "Transform.h"
+#include "TransformComponent.h"
 class Scale :
-    public Transform
+    public TransformComponent
 {
 private:
 public:

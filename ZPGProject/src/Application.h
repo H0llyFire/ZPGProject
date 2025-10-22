@@ -9,7 +9,8 @@
 #include "gfx/DrawableObject.h"
 #include "gfx/Model.h"
 #include "gfx/Scene.h"
-#include "gfx/Shader.h"
+#include "gfx/VertexShader.h"
+#include "gfx/FragmentShader.h"
 
 class Application
 {
@@ -19,14 +20,14 @@ private:
 	float _ratio;
 
 	ResourceManager<Shader> _shaderManager;
-	ResourceManager<Transform> _transformManager;
-	ResourceManager<Transforms> _transformGroupManager;
+	ResourceManager<TransformComponent> _transformManager;
+	ResourceManager<TransformComposite> _transformGroupManager;
 	ResourceManager<Model> _modelManager;
 	ResourceManager<DrawableObject> _objectManager;
 	ResourceManager<Scene> _sceneManager;
 	ResourceManager<Camera> _cameraManager;
 
-	Camera* _currentCamera;
+	std::shared_ptr<Camera> _currentCamera;
 
 	std::unordered_map<int, bool> _keyIsPressed;
 
