@@ -1,7 +1,25 @@
 #version 330
-in vec3 colorOut;
 out vec4 fragColor;
+
+
+#define MAX_LIGHTS 16
+struct Light
+{
+	vec3 position;
+	vec4 color;
+	vec4 specularColor;
+};
+uniform Light lights[MAX_LIGHTS];
+uniform int lightCount;
+
+
 void main() 
 {
-	fragColor = vec4(colorOut, 1.0);
+	vec4 finalColor = vec4(0.0, 0.0, 0.0, 0.0);
+	for (int i = 0; i < lightCount; i++) 
+	{
+		finalColor += lights[i].color;
+	}
+
+	fragColor = finalColor;
 }

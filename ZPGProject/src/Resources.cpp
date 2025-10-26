@@ -9,9 +9,24 @@
 #include "gfx/models/suzi_flat.h"
 #include "gfx/models/suzi_smooth.h"
 #include "gfx/models/tree.h"
-#include "gfx/trans/Rotate.h"
-#include "gfx/trans/Scale.h"
+
+#include "gfx/trans/TransformComponent.h"
+#include "gfx/trans/TransformComposite.h"
 #include "gfx/trans/Translate.h"
+#include "gfx/trans/Scale.h"
+#include "gfx/trans/Rotate.h"
+#include "gfx/trans/RotateTime.h"
+#include "gfx/trans/TranslateRandom.h"
+
+#include "gfx/gfxHelpers/FragmentShader.h"
+#include "gfx/gfxHelpers/VertexShader.h"
+
+#include "gfx/Camera.h"
+#include "gfx/DrawableObject.h"
+#include "gfx/Light.h"
+#include "gfx/Model.h"
+#include "gfx/Scene.h"
+#include "gfx/ShaderProgram.h"
 
 std::shared_ptr<VertexShader> Resources::CreateVertexShader(const std::string& name)
 {
@@ -54,14 +69,14 @@ std::shared_ptr<DrawableObject> Resources::CreateDrawableObject(const std::strin
 	return _drawableObjectManager.Add(name, _modelManager.Get(modelName), _shaderManager.Get(shaderName), transform);
 }
 
-std::shared_ptr<Camera> Resources::CreateCamera(const std::string& name, float width, float height)
+std::shared_ptr<Camera> Resources::CreateCamera(const std::string& name, float width, float height, float fov)
 {
-	return _cameraManager.Add(name, width, height);
+	return _cameraManager.Add(name, width, height, fov);
 }
 
-std::shared_ptr<Light> Resources::CreateLight(const std::string& name, glm::vec3 position, glm::vec4 color)
+std::shared_ptr<Light> Resources::CreateLight(const std::string& name, std::shared_ptr<TransformComposite>& transform, glm::vec4 color, glm::vec4 specularColor)
 {
-	return _lightManager.Add(name, position, color);
+	return _lightManager.Add(name, transform, color, specularColor);
 }
 
 void Resources::InitModels()
@@ -99,27 +114,28 @@ void Resources::InitShaders(const std::string& mainCam)
 	CreateShaderProgram("Blinn", mainCam);
 }
 
-std::shared_ptr<Camera> Resources::InitCamera(const float windowWidth, const float windowHeight)
+std::shared_ptr<Camera> Resources::InitCamera(const float windowWidth, const float windowHeight, float fov)
 {
-	return CreateCamera("Main", windowWidth, windowHeight);
+	return CreateCamera("Main", windowWidth, windowHeight, fov);
 }
 
 void Resources::InitScenes()
 {
-	InitScene1();
+	//InitScene1();
 	InitScene2();
-	InitScene3();
-	InitScene4();
+	//InitScene3();
+	//InitScene4();
 }
 
 void Resources::InitScene1()
 {
 	auto scene = _sceneManager.Add("Triangle");
+
 	scene->AddObject(std::make_shared<DrawableObject>(_modelManager.Get("Triangle"), _shaderManager.Get("Blinn"), nullptr));
 
-	auto light = CreateLight("LightAbove", glm::vec3(1.f, 0.f, 1.f), glm::vec4(1.f, 1.f, 1.f, 1.f));
+	auto tr = _transformCompositeManager.Add("TransformAbove", _transformComponentManager.Add<Translate>("MoveAbove", glm::vec3(1.f, 0.f, 1.f)));
+	auto light = CreateLight("LightAbove", tr, glm::vec4(1.f, 1.f, 1.f, 1.f), glm::vec4(1.f, 1.f, 1.f, 1.f));
 	scene->AddLight(light);
-	_shaderManager.Get("Blinn")->ChangeLight(light);
 }
 
 void Resources::InitScene2()
@@ -139,22 +155,19 @@ void Resources::InitScene2()
 
 	
 	auto scene = _sceneManager.Add("Ballz");
-	scene->AddObject(CreateDrawableObject("SphereUp", "Sphere", "Constant", "TransformUpBall"));
-	scene->AddObject(CreateDrawableObject("SphereDown", "Sphere", "Lambert", "TransformDownBall"));
+	scene->AddObject(CreateDrawableObject("SphereUp", "Sphere", "Phong", "TransformUpBall"));
+	scene->AddObject(CreateDrawableObject("SphereDown", "Sphere", "Phong", "TransformDownBall"));
 	scene->AddObject(CreateDrawableObject("SphereRight", "Sphere", "Phong", "TransformRightBall"));
-	scene->AddObject(CreateDrawableObject("SphereLeft", "Sphere", "Blinn", "TransformLeftBall"));
+	scene->AddObject(CreateDrawableObject("SphereLeft", "Sphere", "Phong", "TransformLeftBall"));
+
 	
-	auto light = CreateLight("LightAtOrigin", glm::vec3(0.f, 0.f, 0.f), glm::vec4(1.f, 1.f, 1.f, 1.f));
+	auto tr = _transformCompositeManager.Add("TransformAtOrigin", _transformComponentManager.Add<Translate>("MoveToOrigin?", glm::vec3(0.f, 0.f, 0.f)));
+	auto light = CreateLight("LightOrigin", tr, glm::vec4(0.8f, 0.4f, 0.3f, 1.f), glm::vec4(1.f, 1.f, 1.f, 1.f));
 	scene->AddLight(light);
-	_shaderManager.Get("Constant")->ChangeLight(light);
-	_shaderManager.Get("Lambert")->ChangeLight(light);
-	_shaderManager.Get("Phong")->ChangeLight(light);
-	_shaderManager.Get("Blinn")->ChangeLight(light);
 }
 
 void Resources::InitScene3()
 {
-	std::srand(std::time(nullptr));
 	auto scene = _sceneManager.Add("Forest");
 
 	for(int x = 0; x < 15; x++)
@@ -186,15 +199,29 @@ void Resources::InitScene3()
 		scene->AddObject(CreateDrawableObject("Bush" + name, "Bushes", "Blinn", trans));
 	}
 
-	scene->AddObject(CreateDrawableObject("ForestFloor", "Plain", "Constant", 
+	scene->AddObject(CreateDrawableObject("ForestFloor", "Plain", "Blinn", 
 		_transformCompositeManager.Add("FloorSized", _transformComponentManager.Add<Scale>("Scale1000", glm::vec3(10000.f, 1.f, 10000.f)))
 		));
-
-	auto light = CreateLight("LightHigh", glm::vec3(0.f, 100.f, 0.f), glm::vec4(1.f, 1.f, 1.f, 1.f));
+	/*
+	auto tr = _transformCompositeManager.Add("TransformHighUp", _transformComponentManager.Add<Translate>("MoveHighUp", glm::vec3(0.f, 1.f, 0.f)));
+	auto light = CreateLight("LightHigh", tr, glm::vec4(1.f, 1.f, 1.f, 1.f), glm::vec4(1.f, 1.f, 1.f, 1.f));
 	scene->AddLight(light);
-	_shaderManager.Get("Constant")->ChangeLight(light);
-	_shaderManager.Get("Blinn")->ChangeLight(light);
+	*/
+
+	for(int i = 0; i < 16; i++)
+	{
+		float xRand = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX / 45.f);
+		float zRand = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX / 45.f);
+		auto tr = _transformCompositeManager.Add("TranformFly" + std::to_string(i), _transformComponentManager.Add<Translate>("MoveFly" + std::to_string(i), glm::vec3(xRand, 0.3, zRand)));
+		tr->AddTransform(_transformComponentManager.Add<TranslateRandom>("RandomMoveFly" + std::to_string(i), 0.8f));
+
+		auto light = CreateLight("LightFly" + std::to_string(i), tr, glm::vec4(1.f, 1.f, 0.f, 1.f), glm::vec4(.6f, .6f, .6f, 1.f));
+		scene->AddLight(light);
+	}
 }
+
+void Resources::InitScene4()
+{
 /*
  (109.08f, 109.08f, 109.08f)
  (0.382f, 0.382f, 0.382f)		(150.f, 0.f, 0.f)
@@ -216,9 +243,6 @@ void Resources::InitScene3()
  (0.2f, 0.2f, 0.2f)				(744.f, 0.f, 0.f)
  (0.19f, 0.19f, 0.19f)			(1167.f, 0.f, 0.f)
  */
-
-void Resources::InitScene4()
-{
 	std::vector<glm::vec3> scales =
 	{
 		glm::vec3(1.f),
@@ -294,17 +318,25 @@ void Resources::InitScene4()
 
 
 	
-	auto light = _lightManager.Get("LightAtOrigin");
+	auto tr = _transformCompositeManager.Add("TransformAtOriginSpace", _transformComponentManager.Add<Translate>("MoveToOriginSpace?", glm::vec3(0.f, 0.f, 0.f)));
+	auto light = CreateLight("LightOriginSpace", tr, glm::vec4(1.f, 1.f, 1.f, 1.f), glm::vec4(1.f, 1.f, 1.f, 1.f));
 	scene->AddLight(light);
-	_shaderManager.Get("Constant")->ChangeLight(light);
-	_shaderManager.Get("Blinn")->ChangeLight(light);
 }
 
 std::shared_ptr<Scene> Resources::EnableScene(const std::string& name)
 {
 	auto scene = _sceneManager.Get(name);
 
-
-
 	return scene;
+}
+
+void Resources::UpdateWindowSize(float width, float height)
+{
+	for(const auto& [key, value] : _cameraManager.Resources)
+		value->UpdateProjection(width, height);
+}
+void Resources::UpdateCameraFOV(const std::string& name, float fov)
+{
+	auto camera = _cameraManager.Get(name);
+	camera->UpdateFOV(fov);
 }

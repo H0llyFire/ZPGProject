@@ -1,7 +1,10 @@
 ﻿#pragma once
 
+class ObservableObject;
+class ObservableArgs;
+
 class Observer
 {
 public:
-	virtual void Notify() = 0;
+	virtual void Notify(ObservableObject* sender, const ObservableArgs& args) = 0;
 };

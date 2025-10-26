@@ -5,19 +5,19 @@
 
 #include "gfx/trans/TransformComponent.h"
 
-
 template<typename T>
 class ResourceManager
 {
-	std::unordered_map<std::string, std::shared_ptr<T>> _resources{};
 public:
+	std::unordered_map<std::string, std::shared_ptr<T>> Resources{};
+
 	ResourceManager() = default;
 
 
 	std::shared_ptr<T> Get(const std::string& name)
 	{
-		auto it = _resources.find(name);
-		if(it != _resources.end())
+		auto it = Resources.find(name);
+		if(it != Resources.end())
 			return it->second;
 		return nullptr;
 	}
@@ -29,22 +29,22 @@ public:
 			return existing;
 
 		auto res = std::make_shared<T>(std::forward<Args>(args)...);
-        _resources[name] = res;
-        return res;
+	    Resources[name] = res;
+	    return res;
 	}
 
 	template<typename Subclass, typename... Args>
 	std::shared_ptr<T> Add(const std::string& name, Args&&... args)
 	{
-	    return Copy(name, std::make_shared<Subclass>(std::forward<Args>(args)...));
+	    return Move(name, std::make_shared<Subclass>(std::forward<Args>(args)...));
 	}
 
-	std::shared_ptr<T> Copy(const std::string& name, std::shared_ptr<T> resource)
-    {
-        if (std::shared_ptr<T> existing = Get(name))
-            return existing;
+	std::shared_ptr<T> Move(const std::string& name, std::shared_ptr<T> resource)
+	{
+	    if (std::shared_ptr<T> existing = Get(name))
+	        return existing;
 
-        _resources[name] = std::move(resource);
-        return _resources[name];
-    }
+	    Resources[name] = std::move(resource);
+	    return Resources[name];
+	}
 };

@@ -1,5 +1,7 @@
 ﻿#pragma once
-#include "VertexBuffer.h"
+#include <GL/glew.h>
+
+class VertexBuffer;
 
 class VertexArray
 {

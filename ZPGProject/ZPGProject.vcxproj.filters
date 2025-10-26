@@ -48,16 +48,16 @@
     <ClCompile Include="src\gfx\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\gfx\Shader.cpp">
+    <ClCompile Include="src\gfx\gfxHelpers\Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\gfx\trans\TransformComposite.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\gfx\VertexArray.cpp">
+    <ClCompile Include="src\gfx\gfxHelpers\VertexArray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\gfx\VertexBuffer.cpp">
+    <ClCompile Include="src\gfx\gfxHelpers\VertexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\gfx\Camera.cpp">
@@ -69,10 +69,10 @@
     <ClCompile Include="src\gfx\ShaderProgram.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\gfx\VertexShader.cpp">
+    <ClCompile Include="src\gfx\gfxHelpers\VertexShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\gfx\FragmentShader.cpp">
+    <ClCompile Include="src\gfx\gfxHelpers\FragmentShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ObservableObject.cpp">
@@ -81,12 +81,27 @@
     <ClCompile Include="src\Resources.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\gfx\trans\Rotate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\trans\RotateTime.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\trans\Scale.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\trans\Translate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\trans\TranslateRandom.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Application.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\VertexBuffer.h">
+    <ClInclude Include="src\gfx\gfxHelpers\VertexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\models\bushes.h">
@@ -134,13 +149,13 @@
     <ClInclude Include="src\gfx\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\Shader.h">
+    <ClInclude Include="src\gfx\gfxHelpers\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\trans\TransformComposite.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\VertexArray.h">
+    <ClInclude Include="src\gfx\gfxHelpers\VertexArray.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\Camera.h">
@@ -158,16 +173,22 @@
     <ClInclude Include="src\gfx\ShaderProgram.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\VertexShader.h">
+    <ClInclude Include="src\gfx\gfxHelpers\VertexShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\FragmentShader.h">
+    <ClInclude Include="src\gfx\gfxHelpers\FragmentShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ObservableObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Resources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ObserverableArgs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\trans\TranslateRandom.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

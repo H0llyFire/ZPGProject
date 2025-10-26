@@ -1,10 +1,12 @@
 ﻿#include "ShaderProgram.h"
-#include "Shader.h"
-#include "Camera.h"
 
 #include <fstream>
 #include <iostream>
-#include <sstream>
+
+#include "Camera.h"
+#include "Light.h"
+#include "gfxHelpers/FragmentShader.h"
+#include "gfxHelpers/VertexShader.h"
 
 
 void ShaderProgram::Create(const std::shared_ptr<VertexShader>& vertShader, const std::shared_ptr<FragmentShader>& fragShader)
@@ -24,7 +26,7 @@ void ShaderProgram::Create(const std::shared_ptr<VertexShader>& vertShader, cons
 	    glGetProgramiv(_program, GL_INFO_LOG_LENGTH, &infoLogLength);
 	    GLchar *strInfoLog = new GLchar[infoLogLength + 1];
 	    glGetProgramInfoLog(_program, infoLogLength, NULL, strInfoLog);
-	    fprintf(stderr, "Linker failure: %s\n", strInfoLog);
+		std::cerr << "Linker Failure: " << strInfoLog << "\n";
 	    delete[] strInfoLog;
 	}
 }
@@ -35,12 +37,13 @@ void ShaderProgram::UpdateCamera() const
 	const GLint idProjectionMatrix = glGetUniformLocation(_program, "projectionMatrix");
 	const GLint idCameraPos = glGetUniformLocation(_program, "cameraPos");
 	
-	Bind();
+	glUseProgram(_program);
+
 	glUniformMatrix4fv(idViewMatrix, 1, GL_FALSE, &_camera->GetCamera()[0][0]);
 	glUniformMatrix4fv(idProjectionMatrix, 1, GL_FALSE, &_camera->GetProjection()[0][0]);
 	glUniform3fv(idCameraPos, 1, &_camera->GetPosition()[0]);
 }
-
+/*
 void ShaderProgram::UpdateLight() const
 {
 	const GLint idLightPos = glGetUniformLocation(_program, "lightPos");
@@ -60,22 +63,16 @@ void ShaderProgram::UpdateLight() const
 	glUniform3fv(idLightPos, 1, &_light->GetPosition()[0]);
 	glUniform4fv(idLightColor, 1, &_light->GetColor()[0]);
 }
-
+*/
 ShaderProgram::ShaderProgram(const std::shared_ptr<Camera>& camera, const std::shared_ptr<VertexShader>& vertShader, const std::shared_ptr<FragmentShader>& fragShader)
-	: _camera(camera), _light(nullptr)
+	: _camera(camera)
 {
 	Create(vertShader, fragShader);
-	UpdateLight();
 }
 
 ShaderProgram::~ShaderProgram()
 {
 	glDeleteProgram(_program);
-}
-
-void ShaderProgram::Bind() const
-{
-	glUseProgram(_program);
 }
 void ShaderProgram::Bind(glm::mat4 iMat) const
 {
@@ -89,16 +86,38 @@ void ShaderProgram::Unbind()
 	glUseProgram(0);
 }
 
-void ShaderProgram::ChangeLight(const std::shared_ptr<Light>& light)
+void ShaderProgram::UpdateLight(const Light* light, const std::string& index) const
 {
-	_light = light;
-	UpdateLight();
+	const GLint idLightPos = glGetUniformLocation(_program, ("lights[" + index + "].position").c_str());
+	const GLint idLightColor = glGetUniformLocation(_program, ("lights[" + index + "].color").c_str());
+	const GLint idLightSpecular = glGetUniformLocation(_program, ("lights[" + index + "].specularColor").c_str());
+	
+	glUseProgram(_program);
+
+	glUniform3fv(idLightPos, 1, &light->GetPosition()[0]);
+	glUniform4fv(idLightColor, 1, &light->GetColor()[0]);
+	glUniform4fv(idLightSpecular, 1, &light->GetSpecularColor()[0]);
+
+	std::cout << "Shader " << _program << " Updated.\n";
 }
 
-void ShaderProgram::Notify()
+void ShaderProgram::UpdateLightCount(int count) const
 {
-	UpdateCamera();
-	UpdateLight();
+	const GLint idLightCount = glGetUniformLocation(_program, "lightCount");
+	glUseProgram(_program);
+	glUniform1i(idLightCount, count);
+}
+
+void ShaderProgram::Notify(ObservableObject* sender, const ObservableArgs& args)
+{
+	if(Light* light = dynamic_cast<Light*>(sender))
+	{
+
+	}
+	else if(Camera* camera = dynamic_cast<Camera*>(sender))
+	{
+		UpdateCamera();
+	}
 }
 
 

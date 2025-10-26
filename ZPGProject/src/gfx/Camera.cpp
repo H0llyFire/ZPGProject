@@ -1,28 +1,29 @@
 ﻿#include "Camera.h"
-#include "glm/gtc/matrix_transform.hpp"
 
+#include "../Observer.h"
+#include "../ObserverableArgs.h"
 
 void Camera::CalcViewMat()
 {
 	_viewMat = glm::lookAt(_eye, _eye+_target, _up);
-	NotifyAll();
+	NotifyAll({});
 }
 
 void Camera::CalcProjMat()
 {
-	_projMat = glm::perspective(glm::radians(60.f), _ratioWidth / _ratioHeight, 0.1f, 100.0f);
-	NotifyAll();
+	_projMat = glm::perspective(glm::radians(_fov), _ratioWidth / _ratioHeight, 0.1f, 100.0f);
+	NotifyAll({});
 }
 
-Camera::Camera(float ratioWidth, float ratioHeight)
-	: _eye(0.f, 0.f, 0.f), _target(0.f, 0.f, 0.f), _up(0.f, 1.f, 0.f), _ratioWidth(ratioWidth), _ratioHeight(ratioHeight)
+Camera::Camera(float ratioWidth, float ratioHeight, float fov)
+	: _eye(0.f, 0.f, 2.f), _target(0.f, 0.f, -1.f), _up(0.f, 1.f, 0.f), _ratioWidth(ratioWidth), _ratioHeight(ratioHeight), _fov(fov)
 {
 	CalcProjMat();
 	CalcViewMat();
 }
 
-Camera::Camera(float ratioWidth, float ratioHeight, const std::shared_ptr<Observer>& shader)
-	: _eye(0.f, 0.f, 0.f), _target(0.f, 0.f, 0.f), _up(0.f, 1.f, 0.f), _ratioWidth(ratioWidth), _ratioHeight(ratioHeight)
+Camera::Camera(float ratioWidth, float ratioHeight, float fov, const std::shared_ptr<Observer>& shader)
+	: _eye(0.f, 0.f, 0.f), _target(0.f, 0.f, 0.f), _up(0.f, 1.f, 0.f), _ratioWidth(ratioWidth), _ratioHeight(ratioHeight), _fov(fov)
 {
 	Attach(shader);
 	CalcProjMat();
@@ -42,6 +43,24 @@ glm::vec3 Camera::GetPosition() const
 glm::mat4 Camera::GetProjection() const
 {
 	return _projMat;
+}
+
+void Camera::UpdateProjection(float width, float height)
+{
+	_ratioWidth = width;
+	_ratioHeight = height;
+	CalcProjMat();
+}
+
+void Camera::UpdateFOV(float fov)
+{
+	_fov += fov;
+	if(_fov < 1.f)
+		_fov = 1.f;
+	else if(_fov > 180.f)
+		_fov = 180.f;
+
+	CalcProjMat();
 }
 
 void Camera::CalcTarget(float yaw, float pitch)

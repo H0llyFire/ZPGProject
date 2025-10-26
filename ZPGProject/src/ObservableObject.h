@@ -2,15 +2,18 @@
 #include <list>
 #include <memory>
 
-#include "Observer.h"
+class ObservableArgs;
+class Observer;
 
 class ObservableObject
 {
 private:
     std::list<std::weak_ptr<Observer>> _observers;
 public:
+	virtual ~ObservableObject() = default;
+
 	void Attach(const std::shared_ptr<Observer>& observer);
 	void Detach(const std::shared_ptr<Observer>& observer);
 
-	void NotifyAll();
+	void NotifyAll(const ObservableArgs& args);
 };

@@ -1,5 +1,7 @@
 ﻿#include "ObservableObject.h"
-#include <algorithm>
+
+#include "Observer.h"
+#include "ObserverableArgs.h"
 
 void ObservableObject::Attach(const std::shared_ptr<Observer>& observer)
 {
@@ -18,7 +20,7 @@ void ObservableObject::Attach(const std::shared_ptr<Observer>& observer)
 	}
 
 	_observers.push_back(observer);
-	observer->Notify();
+	observer->Notify(this, {});
 }
 
 void ObservableObject::Detach(const std::shared_ptr<Observer>& observer)
@@ -34,13 +36,13 @@ void ObservableObject::Detach(const std::shared_ptr<Observer>& observer)
 	}
 }
 
-void ObservableObject::NotifyAll()
+void ObservableObject::NotifyAll(const ObservableArgs& args)
 {
 	for(auto it = _observers.begin(); it != _observers.end(); )
 	{
 		if(const std::shared_ptr<Observer> obsPtr = it->lock())
 		{
-			obsPtr->Notify();
+			obsPtr->Notify(this, args);
 			++it;
 		}
 		else

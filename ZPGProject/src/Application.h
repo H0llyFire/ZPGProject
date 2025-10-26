@@ -1,16 +1,13 @@
 ﻿#pragma once
 #include <unordered_map>
 
+// ReSharper disable once CppUnusedIncludeDirective
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "ResourceManager.h"
-#include "gfx/Camera.h"
-#include "gfx/DrawableObject.h"
-#include "gfx/Model.h"
-#include "gfx/Scene.h"
-#include "gfx/VertexShader.h"
-#include "gfx/FragmentShader.h"
+#include "Resources.h"
+
+class Camera;
 
 class Application
 {
@@ -19,29 +16,20 @@ private:
 	int _width, _height;
 	float _ratio;
 
-	ResourceManager<Shader> _shaderManager;
-	ResourceManager<TransformComponent> _transformManager;
-	ResourceManager<TransformComposite> _transformGroupManager;
-	ResourceManager<Model> _modelManager;
-	ResourceManager<DrawableObject> _objectManager;
-	ResourceManager<Scene> _sceneManager;
-	ResourceManager<Camera> _cameraManager;
-
 	std::shared_ptr<Camera> _currentCamera;
+	Resources _resourceManager;
 
 	std::unordered_map<int, bool> _keyIsPressed;
+	bool _rightMousePressed = false;
+	double _cursorX, _cursorY;
 
 	static void error_callback(int error, const char* description);
 	static void CursorPosCallback(GLFWwindow* window, double xpos, double ypos);
 	static void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 	static void KeyPressCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-
-
-	bool _rightMousePressed = false;
-	double _cursorX, _cursorY;
+	static void WindowResizeCallback(GLFWwindow* window, int width, int height);
 public:
 	Application(int width = 1600, int height = 900);
 	void Init();
 	void Run();
-
 };

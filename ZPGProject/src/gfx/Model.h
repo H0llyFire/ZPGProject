@@ -1,7 +1,6 @@
 ﻿#pragma once
-#include <GL/glew.h>
-
-#include "VertexArray.h"
+#include "gfxHelpers/VertexArray.h"
+#include "gfxHelpers/VertexBuffer.h"
 
 class Model
 {
