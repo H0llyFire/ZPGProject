@@ -107,12 +107,12 @@ void Scene::SetCamera(const std::shared_ptr<Camera>& camera)
 	_camera = camera;
 }
 
-void Scene::Draw(float dTime) const
+void Scene::Draw(float dTime, std::shared_ptr<TextureUnitManager> tuMngr) const
 {
 	for (const std::shared_ptr<DrawableObject>& obj : _objects)
 	{
 		obj->Update(dTime);
-		obj->Draw(dTime);
+		obj->Draw(dTime, tuMngr);
 	}
 }
 

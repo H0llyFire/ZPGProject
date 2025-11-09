@@ -67,10 +67,13 @@ void Application::Init()
 	glfwGetVersion(&major, &minor, &revision);
 	std::cout << "Using GLFW " << major << '.' << minor << '.' << revision << '\n';
 
+	_textureUnitManager = TextureUnitManager();
+
 	_currentCamera = _resourceManager.InitMainCamera(static_cast<float>(_width), static_cast<float>(_height), 75.f);
 	_currentFlashLight = _resourceManager.InitMainFlashLight();
 	_resourceManager.InitModels();
 	_resourceManager.InitMaterials();
+	_resourceManager.InitTextures();
 	_resourceManager.InitShaders("Main");
 	_resourceManager.InitScenes();
 
@@ -106,7 +109,7 @@ void Application::Run()
 
 
 		if(_currentScene)
-			_currentScene->Draw(dTime);
+			_currentScene->Draw(dTime, std::make_shared<TextureUnitManager>(_textureUnitManager));
 
 		
 		glfwPollEvents();

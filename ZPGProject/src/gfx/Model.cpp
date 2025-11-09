@@ -5,22 +5,22 @@
 
 #include "tiny_obj_loader.h"
 
-Model::Model(const float* points, int count)
-	: _vb(new VertexBuffer(points, count)), _va(new VertexArray(6)), _vertexCount(count / 6)
+Model::Model(const float* points, int count, int groupSize)
+	: _vb(new VertexBuffer(points, count)), _va(new VertexArray(groupSize)), _vertexCount(count / groupSize)
 {
 	_va->AddBuffer(*_vb);
 }
 
-Model::Model(const std::string& modelName)
+Model::Model(const std::string& modelName, const std::string& modelExtraPath)
 {
-	std::string inputFile = "res/assets/" + modelName;
+	std::string inputFile = "res/assets/models/" + modelExtraPath + modelName;
 
     tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;
     std::vector<tinyobj::material_t> materials;
     std::string warn, err;
 
-	bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, inputFile.c_str(), "res/assets/");
+	bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, inputFile.c_str(), ("res/assets/models/" + modelExtraPath).c_str());
 
     if (!warn.empty()) std::cout << "Warn: " << warn << '\n';
     if (!err.empty()) std::cerr << "Err: " << err << '\n';

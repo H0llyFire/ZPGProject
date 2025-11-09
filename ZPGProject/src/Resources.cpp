@@ -33,11 +33,13 @@
 #include "gfx/DrawableObject.h"
 #include "gfx/Model.h"
 #include "gfx/Material.h"
+#include "gfx/Texture.h"
 #include "gfx/Scene.h"
 #include "gfx/ShaderProgram.h"
 #pragma endregion
 
 #pragma region Creation Methods
+//TODO: Reorganize and refactor creation methods
 std::shared_ptr<VertexShader> Resources::CreateVertexShader(const std::string& name)
 {
 	return _vertexShaderManager.Add(name, name);
@@ -59,44 +61,90 @@ std::shared_ptr<ShaderProgram> Resources::CreateShaderProgram(const std::string&
 	_cameraManager.Get(cameraName)->Attach(sp);
 	return sp;
 }
-std::shared_ptr<Model> Resources::CreateModel(const std::string& name, const float* points, int count)
+std::shared_ptr<Model> Resources::CreateModel(const std::string& name, const float* points, int count, int groupSize)
 {
-	return _modelManager.Add(name, points, count);
+	return _modelManager.Add(name, points, count, groupSize);
 }
-std::shared_ptr<Model> Resources::CreateModel(const std::string& name, const std::string& modelFileName)
+std::shared_ptr<Model> Resources::CreateModel(const std::string& name, const std::string& modelFileName, const std::string& modelExtraPath)
 {
-	return _modelManager.Add(name, modelFileName);
+	return _modelManager.Add(name, modelFileName, modelExtraPath);
 }
+
 std::shared_ptr<DrawableObject> Resources::CreateDrawableObject(const std::string& name, const std::string& modelName,
     const std::string& shaderName, const std::string& transformName)
 {
-	return _drawableObjectManager.Add(name, _modelManager.Get(modelName), _shaderManager.Get(shaderName), _transformCompositeManager.Get(transformName));
+	return _drawableObjectManager.Add(
+		name, 
+		_transformCompositeManager.Get(transformName), 
+		_modelManager.Get(modelName), 
+		_shaderManager.Get(shaderName));
 }
 std::shared_ptr<DrawableObject> Resources::CreateDrawableObject(const std::string& name, const std::string& modelName,
 	const std::string& shaderName, const std::shared_ptr<TransformComposite>& transform)
 {
-	return _drawableObjectManager.Add(name, _modelManager.Get(modelName), _shaderManager.Get(shaderName), transform);
+	return _drawableObjectManager.Add(
+		name, 
+		transform, 
+		_modelManager.Get(modelName), 
+		_shaderManager.Get(shaderName));
 }
-
 std::shared_ptr<DrawableObject> Resources::CreateDrawableObject(const std::string& name,
 	const std::shared_ptr<Model>& model, const std::shared_ptr<ShaderProgram>& shader,
 	const std::shared_ptr<TransformComposite>& transform)
 {
-	return _drawableObjectManager.Add(name, model, shader, transform);
+	return _drawableObjectManager.Add(
+		name, 
+		transform, 
+		model, 
+		shader);
 }
-
 std::shared_ptr<DrawableObject> Resources::CreateDrawableObject(const std::string& name, const std::string& modelName,
 	const std::string& shaderName, const std::string& materialName, const std::shared_ptr<TransformComposite>& transform)
 {
-	return _drawableObjectManager.Add(name, _modelManager.Get(modelName), _shaderManager.Get(shaderName),
-		transform, _materialManager.Get(materialName));
+	return _drawableObjectManager.Add(
+		name, 
+		transform,
+		_modelManager.Get(modelName), 
+		_shaderManager.Get(shaderName),
+		_materialManager.Get(materialName));
 }
-
 std::shared_ptr<DrawableObject> Resources::CreateDrawableObject(const std::string& name,
 	const std::shared_ptr<Model>& model, const std::shared_ptr<ShaderProgram>& shader,
 	const std::shared_ptr<Material>& material, const std::shared_ptr<TransformComposite>& transform)
 {
-	return _drawableObjectManager.Add(name, model, shader, transform, material);
+	return _drawableObjectManager.Add(
+		name, 
+		transform, 
+		model, 
+		shader, 
+		material);
+}
+
+std::shared_ptr<DrawableObject> Resources::CreateDrawableObject(const std::string& name,
+	const std::shared_ptr<TransformComposite>& transform, const std::shared_ptr<Model>& model,
+	const std::shared_ptr<ShaderProgram>& shader, const std::shared_ptr<Material>& material,
+	const std::shared_ptr<Texture>& texture)
+{
+	return _drawableObjectManager.Add(
+		name, 
+		transform, 
+		model, 
+		shader, 
+		material, 
+		texture);
+}
+
+std::shared_ptr<DrawableObject> Resources::CreateDrawableObject(const std::string& name,
+	const std::shared_ptr<TransformComposite>& transform, const std::string& modelName, const std::string& shaderName,
+	const std::string& materialName, const std::string& textureName)
+{
+	return _drawableObjectManager.Add(
+		name, 
+		transform, 
+		_modelManager.Get(modelName), 
+		_shaderManager.Get(shaderName), 
+		_materialManager.Get(materialName), 
+		_textureManager.Get(textureName));
 }
 
 std::shared_ptr<Camera> Resources::CreateCamera(const std::string& name, float width, float height, float fov)
@@ -208,7 +256,7 @@ void Resources::InitModels()
 
 	CreateModel("Bushes", bushes, sizeof(bushes) / sizeof(float));
 	CreateModel("Gift", gift, sizeof(gift) / sizeof(float));
-	CreateModel("Plain", plain, sizeof(plain) / sizeof(float));
+	CreateModel("Plain", plain, sizeof(plain) / sizeof(float), 8);
 	CreateModel("Sphere", sphere, sizeof(sphere) / sizeof(float));
 	CreateModel("SuziFlat", suziFlat, sizeof(suziFlat) / sizeof(float));
 	CreateModel("SuziSmooth", suziSmooth, sizeof(suziSmooth) / sizeof(float));
@@ -216,6 +264,18 @@ void Resources::InitModels()
 	CreateModel("Triangle", triangleWithNormal, sizeof(triangleWithNormal) / sizeof(float));
 
 	CreateModel("House", "house.obj");
+	CreateModel("Square", "square.obj");
+	CreateModel("Cube", "cube.obj");
+	CreateModel("Toilet", "toiled.obj");
+	CreateModel("Shrek", "shrek.obj");
+	CreateModel("Fiona", "fiona.obj");
+	CreateModel("Formula", "formula1.obj");
+
+	CreateModel("Door", "Door_1_Flat.obj", "VillageSet/");
+	CreateModel("Wagon", "Prop_Wagon.obj", "VillageSet/");
+
+	CreateModel("Armchair", "armchair.obj", "FurnitureSet/");
+	CreateModel("Bed", "bed_double_B.obj", "FurnitureSet/");
 }
 void Resources::InitShaders(const std::string& mainCam)
 {
@@ -239,7 +299,16 @@ void Resources::InitMaterials()
 	CreateMaterial("BallTest", glm::vec4(0.2f, 0.05f, 0.6f, 1.f), glm::vec3(0.2f, 1.f, 1.f), 80.f);
 	CreateMaterial("FlatWhite", glm::vec4(1.f, 1.f, 1.f, 1.f), glm::vec3(1.f), 1.f);
 }
-
+void Resources::InitTextures()
+{
+	_textureManager.Add("Fiona", "res/assets/textures/fiona.png");
+	_textureManager.Add("Grass", "res/assets/textures/grass.png");
+	_textureManager.Add("Shrek", "res/assets/textures/shrek.png");
+	_textureManager.Add("Toilet", "res/assets/textures/toiled.jpg");
+	_textureManager.Add("Fence", "res/assets/textures/wooden_fence.png");
+	_textureManager.Add("WoodTrim", "res/assets/textures/VillageSet/T_WoodTrim_BaseColor.png");
+	_textureManager.Add("FurnitureGrads", "res/assets/textures/furniturebits_texture.png");
+}
 std::shared_ptr<Camera> Resources::InitMainCamera(const float windowWidth, const float windowHeight, float fov)
 {
 	return CreateCamera("Main", windowWidth, windowHeight, fov);
@@ -325,12 +394,14 @@ void Resources::InitScene3()
 			float zRand = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
 
 			//Resource Manager for transforms wasn't a great idea
+
 			std::string name = std::to_string(x*20+z);
 			auto mat = _materialManager.Get("Tree");
 			auto model = _modelManager.Get("Tree");
 			auto shader = _shaderManager.Get("Blinn");
 			auto trans = _transformCompositeManager.Add("TreeTransform" + name, 
 				_transformComponentManager.Add<Translate>("MoveTree" + name, glm::vec3(3.f*x + 2.f*xRand, 0.f, 3.f*z + 2.f*zRand)));
+			trans->AddTransform(_transformComponentManager.Add<Scale>("ScaleTree" + name, glm::vec3(1.f, 2.5f, 1.f)));
 			scene->AddObject(CreateDrawableObject("Tree" + name, model, shader, mat, trans));
 		}
 	}
@@ -353,16 +424,69 @@ void Resources::InitScene3()
 
 	scene->AddObject(
 		CreateDrawableObject(
-			"ForestFloor", 
-			"Plain", 
-			"Blinn", 
-			"Ground",
+			"ForestFloor",
 			_transformCompositeManager.Add(
 				"FloorSized", 
 				_transformComponentManager.Add<Scale>(
 					"Scale1000", 
-					glm::vec3(10000.f, 1.f, 10000.f)
-	))));
+					glm::vec3(100.f, 1.f, 100.f)
+				)
+			), 
+			"Square", 
+			"Blinn", 
+			"Ground",
+			"Grass"
+		)
+	);
+
+	scene->AddObject(
+		CreateDrawableObject(
+			"Shrek",
+			_transformCompositeManager.Add(
+				"ShrekTransform",
+				_transformComponentManager.Add<Translate>(
+					"MoveShrek",
+					glm::vec3(10.f, 0.f, 10.f)
+				)
+			),
+			"Shrek",
+			"Blinn",
+			"BallTest",
+			"Shrek"
+		)
+	);
+	scene->AddObject(
+		CreateDrawableObject(
+			"Fiona",
+			_transformCompositeManager.Add(
+				"FionaTransform",
+				_transformComponentManager.Add<Translate>(
+					"MoveFiona",
+					glm::vec3(12.f, 0.f, 10.f)
+				)
+			),
+			"Fiona",
+			"Blinn",
+			"BallTest",
+			"Fiona"
+		)
+	);
+	scene->AddObject(
+		CreateDrawableObject(
+			"Toilet",
+			_transformCompositeManager.Add(
+				"ToiletTransform",
+				_transformComponentManager.Add<Translate>(
+					"MoveToilet",
+					glm::vec3(11.f, 0.f, 9.f)
+				)
+			),
+			"Toilet",
+			"Blinn",
+			"BallTest",
+			"Toilet"
+		)
+	);
 
 
 	const auto ffModel = _modelManager.Get("Sphere");
@@ -499,16 +623,20 @@ void Resources::InitScene5()
 
 	scene->AddObject(
 		CreateDrawableObject(
-			"A Tree", 
-			"Tree", 
-			"Blinn",
-			"BallTest",
+			"A Tree",
 			_transformCompositeManager.Add(
 				"TheTreesPosition", 
 				_transformComponentManager.Add<Translate>(
 					"MoveTheTree", 
 					glm::vec3(-5.f, 0.f, -5.f)
-				))));
+				)
+			), 
+			"Tree", 
+			"Blinn",
+			"BallTest",
+			"Fence"
+		)
+	);
 
 	scene->AddObject(
 	CreateDrawableObject(
@@ -522,6 +650,78 @@ void Resources::InitScene5()
 				"MoveHouse", 
 				glm::vec3(5.f, 0.f, 5.f)
 	))));
+
+	scene->AddObject(
+		CreateDrawableObject(
+			"RandomDoor",
+			_transformCompositeManager.Add(
+				"RandomDoorPosition", 
+				_transformComponentManager.Add<Translate>(
+					"MoveTheDoor", 
+					glm::vec3(5.f, 10.f, 0.f)
+				)
+			), 
+			"Door",
+			"Blinn",
+			"BallTest",
+			"WoodTrim"
+		)
+	);
+	scene->AddObject(
+		CreateDrawableObject(
+			"RandomWagon",
+			_transformCompositeManager.Add(
+				"RandomWagonPosition", 
+				_transformComponentManager.Add<Translate>(
+					"MoveTheWagon", 
+					glm::vec3(3.f, 10.f, 0.f)
+				)
+			), 
+			"Wagon",
+			"Blinn",
+			"BallTest",
+			"WoodTrim"
+		)
+	);
+	
+	scene->AddObject(
+		CreateDrawableObject(
+			"RandomBed",
+			_transformCompositeManager.Add(
+				"RandomBedPosition", 
+				_transformComponentManager.Add<Translate>(
+					"MoveTheBed", 
+					glm::vec3(2.f, 10.f, 3.f)
+				)
+			), 
+			"Bed",
+			"Blinn",
+			"BallTest",
+			"FurnitureGrads"
+		)
+	);
+	scene->AddObject(
+		CreateDrawableObject(
+			"RandomArmchair",
+			_transformCompositeManager.Add(
+				"RandomArmchairPosition", 
+				_transformComponentManager.Add<Translate>(
+					"MoveTheArmchair", 
+					glm::vec3(2.f, 10.f, 5.f)
+				)
+			), 
+			"Armchair",
+			"Blinn",
+			"BallTest",
+			"FurnitureGrads"
+		)
+	);
+
+
+
+
+
+
 
 	auto dlight = CreateDirectionalLight("LightAboveTest", glm::vec4(1.f), glm::vec4(1.f), glm::vec3(0.2f, 1.f, 0.2f));
 	scene->AddLight(dlight);

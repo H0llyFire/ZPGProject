@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h>
 
 #include "Resources.h"
+#include "gfx/TextureUnitManager.h"
 
 class Camera;
 
@@ -20,6 +21,7 @@ private:
 	std::shared_ptr<FlashLight> _currentFlashLight;
 	std::shared_ptr<Scene> _currentScene;
 	Resources _resourceManager;
+	TextureUnitManager _textureUnitManager;
 
 	std::unordered_map<int, bool> _keyIsPressed;
 	bool _rightMousePressed = false;

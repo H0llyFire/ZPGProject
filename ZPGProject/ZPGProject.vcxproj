@@ -43,6 +43,8 @@
     <ClCompile Include="src\gfx\Scene.cpp" />
     <ClCompile Include="src\gfx\gfxHelpers\Shader.cpp" />
     <ClCompile Include="src\gfx\ShaderProgram.cpp" />
+    <ClCompile Include="src\gfx\Texture.cpp" />
+    <ClCompile Include="src\gfx\TextureUnitManager.cpp" />
     <ClCompile Include="src\gfx\trans\Rotate.cpp" />
     <ClCompile Include="src\gfx\trans\RotateTime.cpp" />
     <ClCompile Include="src\gfx\trans\Scale.cpp" />
@@ -80,6 +82,8 @@
     <ClInclude Include="src\gfx\Scene.h" />
     <ClInclude Include="src\gfx\gfxHelpers\Shader.h" />
     <ClInclude Include="src\gfx\ShaderProgram.h" />
+    <ClInclude Include="src\gfx\Texture.h" />
+    <ClInclude Include="src\gfx\TextureUnitManager.h" />
     <ClInclude Include="src\gfx\trans\TransformComposite.h" />
     <ClInclude Include="src\gfx\trans\Rotate.h" />
     <ClInclude Include="src\gfx\trans\RotateTime.h" />
@@ -182,7 +186,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)libs\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\include;$(SolutionDir)libs\glew-2.1.0\include;$(SolutionDir)libs\glm-1.0.1;$(SolutionDir)libs\tinyobjloader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)libs\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\include;$(SolutionDir)libs\glew-2.1.0\include;$(SolutionDir)libs\glm-1.0.1;$(SolutionDir)libs\tinyobjloader;$(SolutionDir)libs\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -200,7 +204,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)libs\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\include;$(SolutionDir)libs\glew-2.1.0\include;$(SolutionDir)libs\glm-1.0.1;$(SolutionDir)libs\tinyobjloader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)libs\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\include;$(SolutionDir)libs\glew-2.1.0\include;$(SolutionDir)libs\glm-1.0.1;$(SolutionDir)libs\tinyobjloader;$(SolutionDir)libs\stb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

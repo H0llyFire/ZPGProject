@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "ResourceManager.h"
 
-class Material;
 class FlashLight;
 class AmbientLight;
 class DirectionalLight;
@@ -11,6 +10,8 @@ class VertexShader;
 class FragmentShader;
 class ShaderProgram;
 class Model;
+class Material;
+class Texture;
 class Scene;
 class Camera;
 class Light;
@@ -32,6 +33,7 @@ private:
 
 	ResourceManager<Model> _modelManager;
 	ResourceManager<Material> _materialManager;
+	ResourceManager<Texture> _textureManager;
 	ResourceManager<Scene> _sceneManager;
 
 	//These should be managed by the Scene (Sharing these between scenes is too much pain)
@@ -73,11 +75,13 @@ private:
 	std::shared_ptr<Model> CreateModel(
 		const std::string& name, 
 		const float* points, 
-		int count);
+		int count, 
+		int groupSize = 6);
 
 	std::shared_ptr<Model> CreateModel(
 		const std::string& name, 
-		const std::string& modelFileName);
+		const std::string& modelFileName,
+		const std::string& modelExtraPath = "");
 
 	std::shared_ptr<DrawableObject> CreateDrawableObject(
 		const std::string& name, 
@@ -110,6 +114,22 @@ private:
 		const std::shared_ptr<ShaderProgram>& shader,
 		const std::shared_ptr<Material>& material,
 		const std::shared_ptr<TransformComposite>& transform);
+
+	std::shared_ptr<DrawableObject> CreateDrawableObject(
+		const std::string& name, 
+		const std::shared_ptr<TransformComposite>& transform,
+		const std::shared_ptr<Model>& model, 
+		const std::shared_ptr<ShaderProgram>& shader = nullptr,
+		const std::shared_ptr<Material>& material = nullptr,
+		const std::shared_ptr<Texture>& texture = nullptr);
+
+	std::shared_ptr<DrawableObject> CreateDrawableObject(
+		const std::string& name, 
+		const std::shared_ptr<TransformComposite>& transform,
+		const std::string& modelName, 
+		const std::string& shaderName = "",
+		const std::string& materialName = "",
+		const std::string& textureName = "");
 
 	std::shared_ptr<Camera> CreateCamera(
 		const std::string& name, 
@@ -230,6 +250,7 @@ public:
 	void InitModels();
 	void InitShaders(const std::string& mainCam);
 	void InitMaterials();
+	void InitTextures();
 	std::shared_ptr<Camera> InitMainCamera(float windowWidth, float windowHeight, float fov);
 	std::shared_ptr<FlashLight> InitMainFlashLight();
 	void InitScenes();

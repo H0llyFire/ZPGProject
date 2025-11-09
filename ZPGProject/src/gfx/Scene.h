@@ -7,6 +7,7 @@
 
 #include "../Observer.h"
 
+class TextureUnitManager;
 class FlashLight;
 class AmbientLight;
 class DirectionalLight;
@@ -47,7 +48,7 @@ public:
 	void AddLight(const std::shared_ptr<AmbientLight>& light);
 	void AddLight(const std::shared_ptr<FlashLight>& light);
 	void SetCamera(const std::shared_ptr<Camera>& camera);
-	void Draw(float dTime) const;
+	void Draw(float dTime, std::shared_ptr<TextureUnitManager> tuMngr) const;
 	void Enable();
 
 

@@ -46,6 +46,7 @@ struct AmbientLight
 
 in vec3 fragPos;
 in vec3 fragNorm;
+in vec2 uv;
 
 out vec4 fragColor;
 
@@ -68,6 +69,9 @@ uniform vec4 materialColor;
 //amb, diff, spec
 uniform vec3 materialReflectCoefficients;
 uniform float materialShininess;
+
+uniform bool hasTexture;
+uniform sampler2D textureUnitID;
 
 //------------------------------------------------------------------------------
 //------------------------------ FUNCTIONS -------------------------------------
@@ -182,5 +186,8 @@ void main(void)
 	for(int i = 0; i < spotLightCount; i++)
 		finalColor += calculateSpotLight(spotLights[i], fragPos, fragNorm, normViewDir);
 	
-	fragColor = finalColor * materialColor;
+	if(hasTexture)
+		fragColor = finalColor * texture(textureUnitID, uv);
+	else
+		fragColor = finalColor * materialColor;
 }

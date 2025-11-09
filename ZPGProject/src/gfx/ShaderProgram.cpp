@@ -189,6 +189,16 @@ void ShaderProgram::ApplyMaterial(glm::vec4 color, glm::vec3 reflectCoefficients
 	Unbind();
 }
 
+void ShaderProgram::ApplyTexture(int textureUnit) const
+{
+	const GLint idHasTexture = glGetUniformLocation(_program, "hasTexture");
+	const GLint idTexture = glGetUniformLocation(_program, "textureUnitID");
+	Bind();
+	glUniform1i(idHasTexture, textureUnit < 0 ? 0 : 1);
+	glUniform1i(idTexture, textureUnit);
+	Unbind();
+}
+
 void ShaderProgram::Notify(ObservableObject* sender, const ObservableArgs& args)
 {
 	if(Camera* camera = dynamic_cast<Camera*>(sender))

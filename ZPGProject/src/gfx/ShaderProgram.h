@@ -35,6 +35,7 @@ public:
 	void UpdateDirectionalLightCount(int count) const;
 	void UpdateAmbientLightCount(int count) const;
 	void ApplyMaterial(glm::vec4 color, glm::vec3 reflectCoefficients, float shininess) const;
+	void ApplyTexture(int textureUnit) const;
 
 	void Notify(ObservableObject* sender, const ObservableArgs& args) override;
 };

@@ -13,8 +13,8 @@ private:
 	int _vertexCount;
 
 public:
-	Model(const float* points, int count);
-	Model(const std::string& modelName);
+	Model(const float* points, int count, int groupSize = 6);
+	Model(const std::string& modelName, const std::string& modelExtraPath = "");
 	~Model();
 	void Bind() const;
 	void Unbind() const;
