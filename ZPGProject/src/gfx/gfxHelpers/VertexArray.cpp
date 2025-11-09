@@ -2,7 +2,8 @@
 
 #include "VertexBuffer.h"
 
-VertexArray::VertexArray()
+VertexArray::VertexArray(int size)
+	: _size(size)
 {
 	glGenVertexArrays(1, &_vao); //generate the VAO
 	glBindVertexArray(_vao); //bind the VAO
@@ -13,12 +14,22 @@ void VertexArray::AddBuffer(VertexBuffer& vb)
 {
 	Bind();
 	vb.Bind();
-	
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	//index, pocet, typ, normalized, velikost jednoho vrcholu, pocatek
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (GLvoid*)0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (GLvoid*)(3 * sizeof(float)));
+
+	if(_size>=3)
+	{
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, _size * sizeof(float), (GLvoid*)0);
+	}
+	if(_size>=6)
+	{
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, _size * sizeof(float), (GLvoid*)(3 * sizeof(float)));
+	}
+	if(_size>=8)
+	{
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, _size * sizeof(float), (GLvoid*)(6 * sizeof(float)));
+	}
 }
 
 void VertexArray::Bind()

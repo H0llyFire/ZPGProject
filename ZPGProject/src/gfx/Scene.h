@@ -7,6 +7,11 @@
 
 #include "../Observer.h"
 
+class FlashLight;
+class AmbientLight;
+class DirectionalLight;
+class SpotLight;
+class PointLight;
 class Light;
 class Camera;
 class DrawableObject;
@@ -16,18 +21,35 @@ class ShaderProgram;
 class Scene: public Observer, public std::enable_shared_from_this<Scene>
 {
 private:
-	std::vector<std::shared_ptr<DrawableObject>> _objects;
-	std::vector<std::shared_ptr<Light>> _lights;
-	std::unordered_map<Light*, std::string> _lightIndices;
 	std::unordered_set<std::shared_ptr<ShaderProgram>> _activeShaders;
 	std::shared_ptr<Camera> _camera;
+	std::vector<std::shared_ptr<DrawableObject>> _objects;
+
+	std::vector<std::shared_ptr<PointLight>> _pointLights;
+	std::unordered_map<PointLight*, std::string> _pointLightIndices;
+
+	std::vector<std::shared_ptr<SpotLight>> _spotLights;
+	std::unordered_map<SpotLight*, std::string> _spotLightIndices;
+	
+	std::vector<std::shared_ptr<DirectionalLight>> _directionalLights;
+	std::unordered_map<DirectionalLight*, std::string> _directionalLightIndices;
+	
+	std::vector<std::shared_ptr<AmbientLight>> _ambientLights;
+	std::unordered_map<AmbientLight*, std::string> _ambientLightIndices;
 public:
 	Scene() = default;
 
 	void AddObject(const std::shared_ptr<DrawableObject>& obj);
 	void AddLight(const std::shared_ptr<Light>& light);
+	void AddLight(const std::shared_ptr<PointLight>& light);
+	void AddLight(const std::shared_ptr<SpotLight>& light);
+	void AddLight(const std::shared_ptr<DirectionalLight>& light);
+	void AddLight(const std::shared_ptr<AmbientLight>& light);
+	void AddLight(const std::shared_ptr<FlashLight>& light);
 	void SetCamera(const std::shared_ptr<Camera>& camera);
 	void Draw(float dTime) const;
+	void Enable();
+
 
 	void Notify(ObservableObject* sender, const ObservableArgs& args) override;
 };

@@ -25,12 +25,16 @@ public:
 	ShaderProgram(const std::shared_ptr<Camera>& camera, const std::shared_ptr<VertexShader>& vertShader, const std::shared_ptr<FragmentShader>& fragShader);
 	~ShaderProgram();
 	
-	void Bind(glm::mat4 iMat) const;
+	void Bind() const;
 	static void Unbind();
-
-	//void ChangeLight(const std::shared_ptr<Light>& light);
+	
+	void UpdateModelMatrix(glm::mat4 iMat) const;
 	void UpdateLight(const Light* light, const std::string& index) const;
-	void UpdateLightCount(int count) const;
+	void UpdatePointLightCount(int count) const;
+	void UpdateSpotLightCount(int count) const;
+	void UpdateDirectionalLightCount(int count) const;
+	void UpdateAmbientLightCount(int count) const;
+	void ApplyMaterial(glm::vec4 color, glm::vec3 reflectCoefficients, float shininess) const;
 
 	void Notify(ObservableObject* sender, const ObservableArgs& args) override;
 };

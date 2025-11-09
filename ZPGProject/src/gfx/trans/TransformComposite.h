@@ -17,5 +17,7 @@ public:
 
 	void Apply(glm::mat4& m) override;
 	void Apply(glm::mat4& m, float dTime) override;
+
+	void Clear();
 };
 

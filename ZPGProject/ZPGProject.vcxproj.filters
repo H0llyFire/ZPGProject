@@ -16,21 +16,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\Test4.vert" />
-    <None Include="res\shaders\Test1.frag" />
-    <None Include="res\shaders\Test1.vert" />
-    <None Include="res\shaders\Test2.frag" />
-    <None Include="res\shaders\Test2.vert" />
-    <None Include="res\shaders\Test3.frag" />
-    <None Include="res\shaders\Test3.vert" />
     <None Include="res\shaders\Test4.frag" />
     <None Include="res\shaders\Lambert.frag" />
-    <None Include="res\shaders\Lambert.vert" />
     <None Include="res\shaders\Constant.frag" />
-    <None Include="res\shaders\Constant.vert" />
     <None Include="res\shaders\Phong.frag" />
-    <None Include="res\shaders\Phong.vert" />
     <None Include="res\shaders\Blinn.frag" />
-    <None Include="res\shaders\Blinn.vert" />
+    <None Include="res\shaders\Default.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp">
@@ -63,7 +54,7 @@
     <ClCompile Include="src\gfx\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\gfx\Light.cpp">
+    <ClCompile Include="src\gfx\lights\Light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\gfx\ShaderProgram.cpp">
@@ -94,6 +85,27 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\gfx\trans\TranslateRandom.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\Material.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\lights\PointLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\lights\DirectionalLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\lights\AmbientLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\lights\SpotLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\trans\FollowCamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gfx\lights\FlashLight.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -164,7 +176,7 @@
     <ClInclude Include="src\ResourceManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\gfx\Light.h">
+    <ClInclude Include="src\gfx\lights\Light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Observer.h">
@@ -189,6 +201,27 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\gfx\trans\TranslateRandom.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\Material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\lights\PointLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\lights\DirectionalLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\lights\AmbientLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\lights\SpotLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\trans\FollowCamera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gfx\lights\FlashLight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -29,3 +29,9 @@ void TransformComposite::Apply(glm::mat4& m, float dTime)
 	for (const std::shared_ptr<PeriodicalTransformComponent>& t : _periodicalTransforms)
 		t->Apply(m, dTime);
 }
+
+void TransformComposite::Clear()
+{
+	_transforms.clear();
+	_periodicalTransforms.clear();
+}

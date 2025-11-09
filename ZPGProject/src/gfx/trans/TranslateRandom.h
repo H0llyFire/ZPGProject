@@ -4,6 +4,8 @@
 class TranslateRandom :
     public PeriodicalTransformComponent
 {
+	float _duration;
+	glm::vec3 _direction;
 public:
 	float Speed;
 

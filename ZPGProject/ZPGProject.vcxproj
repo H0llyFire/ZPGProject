@@ -20,19 +20,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\Blinn.frag" />
-    <None Include="res\shaders\Blinn.vert" />
     <None Include="res\shaders\Constant.frag" />
-    <None Include="res\shaders\Constant.vert" />
+    <None Include="res\shaders\Default.vert" />
     <None Include="res\shaders\Lambert.frag" />
-    <None Include="res\shaders\Lambert.vert" />
     <None Include="res\shaders\Phong.frag" />
-    <None Include="res\shaders\Phong.vert" />
-    <None Include="res\shaders\Test1.frag" />
-    <None Include="res\shaders\Test1.vert" />
-    <None Include="res\shaders\Test2.frag" />
-    <None Include="res\shaders\Test2.vert" />
-    <None Include="res\shaders\Test3.frag" />
-    <None Include="res\shaders\Test3.vert" />
     <None Include="res\shaders\Test4.frag" />
     <None Include="res\shaders\Test4.vert" />
   </ItemGroup>
@@ -41,7 +32,13 @@
     <ClCompile Include="src\gfx\Camera.cpp" />
     <ClCompile Include="src\gfx\DrawableObject.cpp" />
     <ClCompile Include="src\gfx\gfxHelpers\FragmentShader.cpp" />
-    <ClCompile Include="src\gfx\Light.cpp" />
+    <ClCompile Include="src\gfx\lights\AmbientLight.cpp" />
+    <ClCompile Include="src\gfx\lights\DirectionalLight.cpp" />
+    <ClCompile Include="src\gfx\lights\FlashLight.cpp" />
+    <ClCompile Include="src\gfx\lights\Light.cpp" />
+    <ClCompile Include="src\gfx\lights\PointLight.cpp" />
+    <ClCompile Include="src\gfx\lights\SpotLight.cpp" />
+    <ClCompile Include="src\gfx\Material.cpp" />
     <ClCompile Include="src\gfx\Model.cpp" />
     <ClCompile Include="src\gfx\Scene.cpp" />
     <ClCompile Include="src\gfx\gfxHelpers\Shader.cpp" />
@@ -54,6 +51,7 @@
     <ClCompile Include="src\gfx\gfxHelpers\VertexBuffer.cpp" />
     <ClCompile Include="src\gfx\gfxHelpers\VertexShader.cpp" />
     <ClCompile Include="src\gfx\trans\Translate.cpp" />
+    <ClCompile Include="src\gfx\trans\FollowCamera.cpp" />
     <ClCompile Include="src\gfx\trans\TranslateRandom.cpp" />
     <ClCompile Include="src\ObservableObject.cpp" />
     <ClCompile Include="src\Resources.cpp" />
@@ -64,7 +62,13 @@
     <ClInclude Include="src\gfx\Camera.h" />
     <ClInclude Include="src\gfx\DrawableObject.h" />
     <ClInclude Include="src\gfx\gfxHelpers\FragmentShader.h" />
-    <ClInclude Include="src\gfx\Light.h" />
+    <ClInclude Include="src\gfx\lights\AmbientLight.h" />
+    <ClInclude Include="src\gfx\lights\DirectionalLight.h" />
+    <ClInclude Include="src\gfx\lights\FlashLight.h" />
+    <ClInclude Include="src\gfx\lights\Light.h" />
+    <ClInclude Include="src\gfx\lights\PointLight.h" />
+    <ClInclude Include="src\gfx\lights\SpotLight.h" />
+    <ClInclude Include="src\gfx\Material.h" />
     <ClInclude Include="src\gfx\Model.h" />
     <ClInclude Include="src\gfx\models\bushes.h" />
     <ClInclude Include="src\gfx\models\gift.h" />
@@ -82,6 +86,7 @@
     <ClInclude Include="src\gfx\trans\Scale.h" />
     <ClInclude Include="src\gfx\trans\TransformComponent.h" />
     <ClInclude Include="src\gfx\trans\Translate.h" />
+    <ClInclude Include="src\gfx\trans\FollowCamera.h" />
     <ClInclude Include="src\gfx\trans\TranslateRandom.h" />
     <ClInclude Include="src\gfx\gfxHelpers\VertexArray.h" />
     <ClInclude Include="src\gfx\gfxHelpers\VertexBuffer.h" />
@@ -177,7 +182,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)libs\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\include;$(SolutionDir)libs\glew-2.1.0\include;$(SolutionDir)libs\glm-1.0.1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)libs\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\include;$(SolutionDir)libs\glew-2.1.0\include;$(SolutionDir)libs\glm-1.0.1;$(SolutionDir)libs\tinyobjloader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -195,7 +200,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)libs\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\include;$(SolutionDir)libs\glew-2.1.0\include;$(SolutionDir)libs\glm-1.0.1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)libs\glfw-3.4.bin.WIN64\glfw-3.4.bin.WIN64\include;$(SolutionDir)libs\glew-2.1.0\include;$(SolutionDir)libs\glm-1.0.1;$(SolutionDir)libs\tinyobjloader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

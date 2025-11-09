@@ -40,6 +40,11 @@ glm::vec3 Camera::GetPosition() const
 	return _eye;
 }
 
+glm::vec3 Camera::GetTarget() const
+{
+	return _target;
+}
+
 glm::mat4 Camera::GetProjection() const
 {
 	return _projMat;
@@ -73,8 +78,8 @@ void Camera::CalcTarget(float yaw, float pitch)
 		_pitch = glm::radians(0.1f);
 
 	_target.x=sin(_pitch)*cos(_yaw);
-	_target.z=sin(_pitch)*sin(_yaw);
 	_target.y=cos(_pitch);
+	_target.z=sin(_pitch)*sin(_yaw);
 
 	CalcViewMat();
 }

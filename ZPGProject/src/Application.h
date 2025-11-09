@@ -17,6 +17,8 @@ private:
 	float _ratio;
 
 	std::shared_ptr<Camera> _currentCamera;
+	std::shared_ptr<FlashLight> _currentFlashLight;
+	std::shared_ptr<Scene> _currentScene;
 	Resources _resourceManager;
 
 	std::unordered_map<int, bool> _keyIsPressed;

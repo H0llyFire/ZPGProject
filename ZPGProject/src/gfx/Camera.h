@@ -23,6 +23,7 @@ public:
 
 	glm::mat4 GetCamera() const;
 	glm::vec3 GetPosition() const;
+	glm::vec3 GetTarget() const;
 	glm::mat4 GetProjection() const;
 
 	void UpdateProjection(float width, float height);

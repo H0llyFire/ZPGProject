@@ -5,9 +5,10 @@
 
 #include "gfx/ShaderProgram.h"
 #include "gfx/Camera.h"
+#include "gfx/lights/FlashLight.h"
 #include "gfx/Scene.h"
 
-using timeframe = std::chrono::time_point<std::chrono::steady_clock>;
+using timeframe = std::chrono::time_point<std::chrono::high_resolution_clock>;
 
 Application::Application(int width, int height)
 	: _width(width), _height(height), _cursorX(0), _cursorY(0)
@@ -65,26 +66,27 @@ void Application::Init()
 	int major, minor, revision;
 	glfwGetVersion(&major, &minor, &revision);
 	std::cout << "Using GLFW " << major << '.' << minor << '.' << revision << '\n';
+
+	_currentCamera = _resourceManager.InitMainCamera(static_cast<float>(_width), static_cast<float>(_height), 75.f);
+	_currentFlashLight = _resourceManager.InitMainFlashLight();
+	_resourceManager.InitModels();
+	_resourceManager.InitMaterials();
+	_resourceManager.InitShaders("Main");
+	_resourceManager.InitScenes();
+
+	_currentScene = _resourceManager.EnableScene("Forest");
 }
 
 void Application::Run()
 {
-	_currentCamera = _resourceManager.InitCamera(static_cast<float>(_width), static_cast<float>(_height), 130.f);
-	_resourceManager.InitModels();
-	_resourceManager.InitShaders("Main");
-	_resourceManager.InitScenes();
-
-
-	auto scene = _resourceManager.EnableScene("Ballz");
-
 	glEnable(GL_DEPTH_TEST);
 
 	timeframe lastFrame = std::chrono::high_resolution_clock::now();
 	while (!glfwWindowShouldClose(_win))
 	{
 	    timeframe currentFrame = std::chrono::high_resolution_clock::now();
-	    std::chrono::duration<float> elapsed = currentFrame - lastFrame;
-		float dTime = elapsed.count();
+	    std::chrono::duration<float> elapsed = (currentFrame - lastFrame);
+		const float dTime = elapsed.count();
 	    lastFrame = currentFrame;
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -103,10 +105,9 @@ void Application::Run()
 			_currentCamera->UpdateFOV(-5.0f * dTime);
 
 
+		if(_currentScene)
+			_currentScene->Draw(dTime);
 
-		scene->Draw(dTime);
-
-		//test2.Draw(dTime);
 		
 		glfwPollEvents();
 		glfwSwapBuffers(_win);
@@ -118,9 +119,8 @@ void Application::Run()
 
 void Application::error_callback(int error, const char* description)
 {
-	fputs(description, stderr);
+	std::cerr << description;
 }
-
 void Application::CursorPosCallback(GLFWwindow* window, double xpos, double ypos)
 {
     Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
@@ -138,7 +138,6 @@ void Application::CursorPosCallback(GLFWwindow* window, double xpos, double ypos
 
 	app->_currentCamera->CalcTarget(yaw, pitch);
 }
-
 void Application::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
     Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
@@ -154,20 +153,37 @@ void Application::MouseButtonCallback(GLFWwindow* window, int button, int action
         }
     }
 }
-
 void Application::KeyPressCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	if(action != GLFW_PRESS && action != GLFW_REPEAT && action != GLFW_RELEASE)
 		return;
 	Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
+	if (!app) 
+		return;
+	
+	//TODO: Make non-repeating key presses eat the pressed bool and process them outside a static function
 	if(action == GLFW_PRESS && key == GLFW_KEY_ESCAPE)
 		glfwSetWindowShouldClose(window, GL_TRUE);
-	else if(action == GLFW_PRESS)
+	if(action == GLFW_PRESS)
+	{
 		app->_keyIsPressed[key] = true;
+
+		if(key == GLFW_KEY_F && app->_currentFlashLight)
+			app->_currentFlashLight->Toggle();
+		else if(key == GLFW_KEY_F1)
+			app->_currentScene = app->_resourceManager.EnableScene("Triangle");
+		else if(key == GLFW_KEY_F2)
+			app->_currentScene = app->_resourceManager.EnableScene("Ballz");
+		else if(key == GLFW_KEY_F3)
+			app->_currentScene = app->_resourceManager.EnableScene("Forest");
+		else if(key == GLFW_KEY_F4)
+			app->_currentScene = app->_resourceManager.EnableScene("SolarSystem");
+		else if(key == GLFW_KEY_F5)
+			app->_currentScene = app->_resourceManager.EnableScene("Test");
+	}
 	else if(action == GLFW_RELEASE)
 		app->_keyIsPressed[key] = false;
 }
-
 void Application::WindowResizeCallback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
